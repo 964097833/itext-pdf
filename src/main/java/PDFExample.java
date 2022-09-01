@@ -1,4 +1,3 @@
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -14,11 +13,8 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -37,7 +33,7 @@ public class PDFExample {
         Document document = new Document(pdf);
 
         // Create a PdfFont
-        PdfFont font = PdfFontFactory.createFont("STSong-Light","UniGB-UCS2-H");
+        PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H");
         // 居中加粗中文
         document.add(new Paragraph("采购询盘")
                 .setFont(font)
@@ -46,7 +42,22 @@ public class PDFExample {
                 .setBold()
         );
 
-        Table table = new Table(UnitValue.createPercentArray(new float[]{2, 14, 2, 2, 8}));
+        Table infoTable = new Table(UnitValue.createPercentArray(new float[]{2, 3, 3, 2, 3}));
+
+        infoTable.addCell(tableCell("产品名称：", font, 15).setBorder(Border.NO_BORDER));
+        infoTable.addCell(tableCell("得力钢卷尺", font, 15).setBorder(Border.NO_BORDER));
+        infoTable.addCell(tableCell("", font, 15).setBorder(Border.NO_BORDER));
+        infoTable.addCell(tableCell("产品品类：", font, 15).setBorder(Border.NO_BORDER));
+        infoTable.addCell(tableCell("雨具", font, 15).setBorder(Border.NO_BORDER));
+
+        document.add(infoTable);
+
+        // 空一行
+        document.add(new Paragraph());
+
+        document.add(new Paragraph("询价产品").setFont(font).setFontSize(18).setBold());
+
+        Table productTable = new Table(UnitValue.createPercentArray(new float[]{2, 14, 2, 2, 8}));
 
         List<String> headerList = new ArrayList<>();
         headerList.add("序号");
@@ -55,27 +66,53 @@ public class PDFExample {
         headerList.add("数量");
         headerList.add("备注");
 
+        // 表头
         for (String header : headerList) {
-            table.addHeaderCell(new Cell().add(new Paragraph(header).setFont(font)).setFontSize(15).setBold());
+            productTable.addHeaderCell(new Cell().add(new Paragraph(header)
+                    .setFont(font))
+                    .setFontSize(15)
+                    .setBold()
+                    .setBackgroundColor(Color.GRAY, 0.3F));
         }
 
         for (int i = 0; i < 5; i++) {
-            table.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1)).setFont(font)).setFontSize(15));
-            table.addCell(new Cell().add(new Paragraph("得力钢卷尺").setFont(font)).setFontSize(15));
-            table.addCell(new Cell().add(new Paragraph("件").setFont(font)).setFontSize(15));
-            table.addCell(new Cell().add(new Paragraph("100").setFont(font)).setFontSize(15));
-            table.addCell(new Cell().add(new Paragraph("采购").setFont(font)).setFontSize(15));
+            productTable.addCell(new Cell().add(new Paragraph(String.valueOf(i + 1)).setFont(font)).setFontSize(15));
+            productTable.addCell(new Cell().add(new Paragraph("得力钢卷尺").setFont(font)).setFontSize(15));
+            productTable.addCell(new Cell().add(new Paragraph("件").setFont(font)).setFontSize(15));
+            productTable.addCell(new Cell().add(new Paragraph("100").setFont(font)).setFontSize(15));
+            productTable.addCell(new Cell().add(new Paragraph("采购").setFont(font)).setFontSize(15));
         }
 
-        table.addCell(new Cell().add(new Paragraph("6").setFont(font)).setFontSize(15));
-        table.addCell(new Cell().add(new Paragraph("得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺").setFont(font)).setFontSize(15));
-        table.addCell(new Cell().add(new Paragraph("件").setFont(font)).setFontSize(15));
-        table.addCell(new Cell().add(new Paragraph("100").setFont(font)).setFontSize(15));
-        table.addCell(new Cell().add(new Paragraph("采购").setFont(font)).setFontSize(15));
+        productTable.addCell(new Cell().add(new Paragraph("6").setFont(font)).setFontSize(15));
+        productTable.addCell(new Cell().add(new Paragraph("得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺得力钢卷尺").setFont(font)).setFontSize(15));
+        productTable.addCell(new Cell().add(new Paragraph("件").setFont(font)).setFontSize(15));
+        productTable.addCell(new Cell().add(new Paragraph("100").setFont(font)).setFontSize(15));
+        productTable.addCell(new Cell().add(new Paragraph("采购").setFont(font)).setFontSize(15));
 
-        document.add(table);
+        document.add(productTable);
+        // 空一行
+        document.add(new Paragraph());
+        document.add(new Paragraph());
+
+        document.add(new Paragraph("询价要求").setFont(font).setFontSize(18).setBold());
+
+        Table requireTable = new Table(UnitValue.createPercentArray(new float[]{2, 8}));
+
+        requireTable.addCell(tableCell("发票要求", font, 15));
+        requireTable.addCell(tableCell("专票", font, 15));
+        requireTable.addCell(tableCell("供应商要求", font, 15));
+        requireTable.addCell(tableCell("实名认证商家", font, 15));
+        requireTable.addCell(tableCell("收货地址", font, 15));
+        requireTable.addCell(tableCell("广州市海珠区华州路", font, 15));
+
+
+        document.add(requireTable);
 
         document.close();
+    }
+
+    private static Cell tableCell(String content, PdfFont font, float fontSize) {
+        return new Cell().add(new Paragraph(content).setFont(font)).setFontSize(fontSize);
     }
 
 
